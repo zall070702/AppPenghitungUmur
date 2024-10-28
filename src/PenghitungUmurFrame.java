@@ -179,22 +179,24 @@ peristiwaThread.interrupt(); // Beri sinyal ke thread untuk berhenti
 // Reset flag untuk thread baru
 stopFetching = false;
 // Mendapatkan peristiwa penting secara asinkron
-peristiwaThread = new Thread(() -> {
-try {
-txtAreaPeristiwa.setText("Tunggu, sedang mengambil data...\n");
-helper.getPeristiwaBarisPerBaris(txtUmur,txtAreaPeristiwa, () -> stopFetching);
-if (!stopFetching) {
-javax.swing.SwingUtilities.invokeLater(() ->
-txtAreaPeristiwa.append("Selesai mengambil data peristiwa"));
-}
-} catch (Exception e) {
-if (Thread.currentThread().isInterrupted()) {
-javax.swing.SwingUtilities.invokeLater(() ->
-txtAreaPeristiwa.setText("Pengambilan data dibatalkan.\n"));
-}
-
-}
-});
+peristiwaThread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+              try {
+                  txtAreaPeristiwa.setText("Tunggu, sedang mengambil data...\n");
+                  helper.getPeristiwaBarisPerBaris(txtUmur,txtAreaPeristiwa, () -> stopFetching);
+                  if (!stopFetching) {
+                      javax.swing.SwingUtilities.invokeLater(() ->
+                              txtAreaPeristiwa.append("Selesai mengambil data peristiwa"));
+                  }
+              } catch (Exception e) {
+                  if (Thread.currentThread().isInterrupted()) {
+                      javax.swing.SwingUtilities.invokeLater(() ->
+                              txtAreaPeristiwa.setText("Pengambilan data dibatalkan.\n"));
+                  }
+                  
+              }         }
+      });
 peristiwaThread.start();
     }//GEN-LAST:event_btnHitungActionPerformed
 
