@@ -121,7 +121,35 @@ String urlString = "https://byabbe.se/on-this-day/" +
  public void getPeristiwaBarisPerBaris(JTextField txtHariUlangTahunBerikutnya, JTextArea txtAreaPeristiwa, Supplier<Boolean> supplier) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+// Menerjemahkan teks ke bahasa Indonesia
+private String translateToIndonesian(String text) {
+try {
+String urlString = "https://lingva.ml/api/v1/en/id/" +
+text.replace(" ", "%20");
+URL url = new URL(urlString);
+HttpURLConnection conn = (HttpURLConnection)
+url.openConnection();
+conn.setRequestMethod("GET");
+conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+int responseCode = conn.getResponseCode();
+if (responseCode != 200) {
+throw new Exception("HTTP response code: " + responseCode);
+}
+BufferedReader in = new BufferedReader(new
+InputStreamReader(conn.getInputStream(), "utf-8"));
+String inputLine;
+StringBuilder content = new StringBuilder();
+while ((inputLine = in.readLine()) != null) {
+content.append(inputLine);
+}
+in.close();
+conn.disconnect();
+JSONObject json = new JSONObject(content.toString());
+return json.getString("translation");
+} catch (Exception e) {
+return text + " (Gagal diterjemahkan)";
+}
+}
 }   
 
 
